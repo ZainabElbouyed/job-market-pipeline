@@ -241,7 +241,7 @@ Les contributions sont les bienvenues ! Voici comment contribuer :
 
 ## ✨ Auteur
 
-**Zainab EL BOUYED** - [GitHub](https://github.com/ZainabElbouyed) - [LinkedIn](https://www.linkedin.com/in/zainab-el-bouyed-85700535b/))
+**Zainab EL BOUYED** - [GitHub](https://github.com/ZainabElbouyed) - [LinkedIn](https://www.linkedin.com/in/zainab-el-bouyed-85700535b/)
 
 ---
 
