@@ -23,7 +23,7 @@ data/archive/*.csv
 !data/archive/.gitkeep
 
 # Visualisations
-visualization/outputs/
+visualization/outputs/*
 !visualization/outputs/.gitkeep
 
 # Logs
