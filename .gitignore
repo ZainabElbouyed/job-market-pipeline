@@ -21,6 +21,7 @@ data/archive/*.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !data/archive/.gitkeep
+!data/processed/jobs_real.csv
 
 # Visualisations
 visualization/outputs/*

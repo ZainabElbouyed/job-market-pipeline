@@ -98,7 +98,13 @@ jobs:
     
     - name: Generate visualizations
       run: |
-        python scripts/generate_test_data.py
+        if [ -f "data/processed/jobs_real.csv" ]; then
+          echo "📊 Utilisation des vraies données (700+ offres)"
+          python scripts/generate_dashboard.py
+        else
+          echo "⚠️ Fichier réel non trouvé, utilisation des données de test"
+          python scripts/generate_test_data.py
+        fi
     
     - name: Prepare for GitHub Pages
       run: |
