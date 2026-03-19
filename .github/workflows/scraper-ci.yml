@@ -105,19 +105,159 @@ jobs:
       run: |
         mkdir -p docs
         if [ -d "visualization/outputs" ]; then
-          cp visualization/outputs/*.png docs/ 2>/dev/null || true
+          # Copier TOUS les fichiers PNG de tous les sous-dossiers
+          find visualization/outputs -name "*.png" -exec cp {} docs/ \;
+          echo "✅ Images copiées: $(ls docs/*.png 2>/dev/null | wc -l) fichiers"
         fi
+        
+        # Copier aussi le dernier dossier pour référence
+        if [ -d "visualization/outputs" ]; then
+          latest_dir=$(ls -td visualization/outputs/*/ 2>/dev/null | head -1)
+          if [ -n "$latest_dir" ]; then
+            echo "📁 Dossier le plus récent: $latest_dir"
+            cp "$latest_dir"*.png docs/ 2>/dev/null || true
+          fi
+        fi
+        
         cp README.md docs/index.md
-        echo "<html><head><title>Job Market Dashboard</title>" > docs/index.html
-        echo "<style>body{font-family:Arial;margin:40px;background:#f5f5f5;}</style>" >> docs/index.html
-        echo "</head><body>" >> docs/index.html
-        echo "<h1>📊 Job Market Dashboard - Maroc</h1>" >> docs/index.html
-        for img in docs/*.png; do
-          name=$(basename "$img" .png)
-          echo "<h2>${name//_/ }</h2>" >> docs/index.html
-          echo "<img src='$(basename $img)' width='900' style='border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.1);'><br><br>" >> docs/index.html
-        done
-        echo "</body></html>" >> docs/index.html
+        
+        # Créer le HTML avec un design plus joli
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>📊 Job Market Dashboard - Maroc</title>
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    margin: 0;
+                    padding: 20px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                }
+                .container {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 20px;
+                    padding: 30px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                }
+                h1 {
+                    color: #333;
+                    text-align: center;
+                    font-size: 2.5em;
+                    margin-bottom: 30px;
+                    border-bottom: 3px solid #667eea;
+                    padding-bottom: 15px;
+                }
+                .dashboard-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+                    gap: 30px;
+                }
+                .dashboard-item {
+                    background: #f8f9fa;
+                    border-radius: 15px;
+                    padding: 20px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                    transition: transform 0.3s;
+                }
+                .dashboard-item:hover {
+                    transform: translateY(-5px);
+                }
+                .dashboard-item h2 {
+                    color: #667eea;
+                    margin-top: 0;
+                    margin-bottom: 20px;
+                    text-align: center;
+                    font-size: 1.5em;
+                    text-transform: capitalize;
+                }
+                .dashboard-item img {
+                    width: 100%;
+                    height: auto;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 30px;
+                    color: #666;
+                    font-size: 0.9em;
+                }
+                .badge {
+                    display: inline-block;
+                    background: #28a745;
+                    color: white;
+                    padding: 5px 15px;
+                    border-radius: 20px;
+                    font-size: 0.9em;
+                    margin-bottom: 20px;
+                }
+                .no-images {
+                    text-align: center;
+                    padding: 50px;
+                    background: #f8f9fa;
+                    border-radius: 10px;
+                    grid-column: 1 / -1;
+                }
+                .no-images h2 {
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>📊 Job Market Dashboard - Maroc</h1>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <span class="badge">🕒 Mis à jour automatiquement</span>
+                </div>
+                
+                <div class="dashboard-grid">
+        EOF
+
+                # Ajouter chaque image trouvée
+                img_count=0
+                for img in docs/*.png 2>/dev/null; do
+                    name=$(basename "$img" .png | sed 's/_/ /g')
+                    cat >> docs/index.html << EOF
+                    <div class="dashboard-item">
+                        <h2>${name}</h2>
+                        <img src="$(basename "$img")" alt="${name}">
+                    </div>
+        EOF
+                    img_count=$((img_count + 1))
+                done
+
+                # Si aucune image, ajouter un message
+                if [ $img_count -eq 0 ]; then
+                    cat >> docs/index.html << 'EOF'
+                    <div class="no-images">
+                        <h2>⚠️ Aucune image disponible</h2>
+                        <p>Les visualisations seront disponibles après la prochaine exécution du pipeline.</p>
+                        <p>⏳ Dernière mise à jour: $(date)</p>
+                    </div>
+        EOF
+                fi
+
+                # Fermer le HTML
+                cat >> docs/index.html << 'EOF'
+                </div>
+                <div class="footer">
+                    <p>Généré automatiquement par GitHub Actions • Job Market Pipeline</p>
+                    <p><a href="https://github.com/ZainabElbouyed/job-market-pipeline" style="color: #667eea;">Voir le code source</a> | 
+                      <a href="https://github.com/ZainabElbouyed/job-market-pipeline/actions" style="color: #667eea;">Derniers runs</a></p>
+                    <p>📊 $(date '+%d/%m/%Y %H:%M')</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+
+        echo "✅ Page HTML créée avec $img_count images"
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
