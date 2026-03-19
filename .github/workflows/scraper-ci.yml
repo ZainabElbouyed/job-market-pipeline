@@ -103,26 +103,17 @@ jobs:
     
     - name: Prepare for GitHub Pages
       run: |
+        set -e  # Arrêter en cas d'erreur
         mkdir -p docs
+        
+        # Copier les images - version simplifiée sans redirection d'erreur complexe
         if [ -d "visualization/outputs" ]; then
-          # Copier TOUS les fichiers PNG de tous les sous-dossiers
-          find visualization/outputs -name "*.png" -exec cp {} docs/ \;
-          echo "✅ Images copiées: $(ls docs/*.png 2>/dev/null | wc -l) fichiers"
+          find visualization/outputs -name "*.png" -type f -exec cp {} docs/ \; 2>&1 || true
+          echo "✅ Images copiées: $(ls docs/*.png 2>/dev/null | wc -l || echo 0) fichiers"
         fi
         
-        # Copier aussi le dernier dossier pour référence
-        if [ -d "visualization/outputs" ]; then
-          latest_dir=$(ls -td visualization/outputs/*/ 2>/dev/null | head -1)
-          if [ -n "$latest_dir" ]; then
-            echo "📁 Dossier le plus récent: $latest_dir"
-            cp "$latest_dir"*.png docs/ 2>/dev/null || true
-          fi
-        fi
-        
-        cp README.md docs/index.md
-        
-        # Créer le HTML avec un design plus joli
-        cat > docs/index.html << 'EOF'
+        # Créer le fichier HTML
+        cat > docs/index.html << 'HTML'
         <!DOCTYPE html>
         <html lang="fr">
         <head>
@@ -217,34 +208,36 @@ jobs:
                 </div>
                 
                 <div class="dashboard-grid">
-        EOF
+        HTML
 
-                # Ajouter chaque image trouvée
+                # Compter les images et les ajouter
                 img_count=0
-                for img in docs/*.png 2>/dev/null; do
-                    name=$(basename "$img" .png | sed 's/_/ /g')
-                    cat >> docs/index.html << EOF
+                for img in docs/*.png; do
+                    if [ -f "$img" ]; then
+                        name=$(basename "$img" .png | sed 's/_/ /g')
+                        cat >> docs/index.html << EOF
                     <div class="dashboard-item">
                         <h2>${name}</h2>
                         <img src="$(basename "$img")" alt="${name}">
                     </div>
         EOF
-                    img_count=$((img_count + 1))
+                        img_count=$((img_count + 1))
+                    fi
                 done
 
                 # Si aucune image, ajouter un message
                 if [ $img_count -eq 0 ]; then
-                    cat >> docs/index.html << 'EOF'
+                    cat >> docs/index.html << 'HTML'
                     <div class="no-images">
                         <h2>⚠️ Aucune image disponible</h2>
                         <p>Les visualisations seront disponibles après la prochaine exécution du pipeline.</p>
                         <p>⏳ Dernière mise à jour: $(date)</p>
                     </div>
-        EOF
+        HTML
                 fi
 
                 # Fermer le HTML
-                cat >> docs/index.html << 'EOF'
+                cat >> docs/index.html << 'HTML'
                 </div>
                 <div class="footer">
                     <p>Généré automatiquement par GitHub Actions • Job Market Pipeline</p>
@@ -255,7 +248,7 @@ jobs:
             </div>
         </body>
         </html>
-        EOF
+        HTML
 
         echo "✅ Page HTML créée avec $img_count images"
     
