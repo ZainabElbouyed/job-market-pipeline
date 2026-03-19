@@ -98,22 +98,21 @@ jobs:
     
     - name: Generate visualizations
       run: |
-        python scripts/run_pipeline.py --pages 1 --visuals || \
-        python scripts/run_pipeline.py --no-scrape --visuals
+        python scripts/generate_test_data.py
     
     - name: Prepare for GitHub Pages
       run: |
-        set -e  # Arrêter en cas d'erreur
+        set -e
         mkdir -p docs
         
-        # Copier les images - version simplifiée sans redirection d'erreur complexe
+        # Copier les images
         if [ -d "visualization/outputs" ]; then
           find visualization/outputs -name "*.png" -type f -exec cp {} docs/ \; 2>&1 || true
           echo "✅ Images copiées: $(ls docs/*.png 2>/dev/null | wc -l || echo 0) fichiers"
         fi
         
-        # Créer le fichier HTML
-        cat > docs/index.html << 'HTML'
+        # Créer le fichier HTML avec les variables interprétées
+        cat > docs/index.html << EOF
         <!DOCTYPE html>
         <html lang="fr">
         <head>
@@ -208,9 +207,9 @@ jobs:
                 </div>
                 
                 <div class="dashboard-grid">
-        HTML
+        EOF
 
-                # Compter les images et les ajouter
+                # Ajouter les images
                 img_count=0
                 for img in docs/*.png; do
                     if [ -f "$img" ]; then
@@ -225,33 +224,34 @@ jobs:
                     fi
                 done
 
-                # Si aucune image, ajouter un message
+                # Si pas d'images, message avec date réelle
                 if [ $img_count -eq 0 ]; then
-                    cat >> docs/index.html << 'HTML'
+                    current_date=$(date '+%d/%m/%Y %H:%M')
+                    cat >> docs/index.html << EOF
                     <div class="no-images">
                         <h2>⚠️ Aucune image disponible</h2>
                         <p>Les visualisations seront disponibles après la prochaine exécution du pipeline.</p>
-                        <p>⏳ Dernière mise à jour: $(date)</p>
+                        <p>⏳ Dernière mise à jour: ${current_date}</p>
                     </div>
-        HTML
+        EOF
                 fi
 
-                # Fermer le HTML
-                cat >> docs/index.html << 'HTML'
+                # Fermeture avec date réelle dans le footer
+                current_date=$(date '+%d/%m/%Y %H:%M')
+                cat >> docs/index.html << EOF
                 </div>
                 <div class="footer">
                     <p>Généré automatiquement par GitHub Actions • Job Market Pipeline</p>
                     <p><a href="https://github.com/ZainabElbouyed/job-market-pipeline" style="color: #667eea;">Voir le code source</a> | 
                       <a href="https://github.com/ZainabElbouyed/job-market-pipeline/actions" style="color: #667eea;">Derniers runs</a></p>
-                    <p>📊 $(date '+%d/%m/%Y %H:%M')</p>
+                    <p>📊 ${current_date}</p>
                 </div>
             </div>
         </body>
         </html>
-        HTML
+        EOF
 
         echo "✅ Page HTML créée avec $img_count images"
-    
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
