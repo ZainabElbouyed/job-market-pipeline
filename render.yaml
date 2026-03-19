@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: job-market-pipeline
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python scripts/run_pipeline.py --pages 30 --visuals
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.0

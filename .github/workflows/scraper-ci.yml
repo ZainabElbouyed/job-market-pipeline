@@ -73,14 +73,40 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/job-market-pipeline:latest
   
-  deploy:
-    needs: build-docker
+  deploy-pages:
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     steps:
-      - name: Trigger Render deploy
-        run: |
-          curl -X POST \
-            https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}"
+    - uses: actions/checkout@v3
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+    
+    - name: Generate visualizations
+      run: |
+        python scripts/run_pipeline.py --pages 1 --visuals
+    
+    - name: Prepare for GitHub Pages
+      run: |
+        mkdir -p docs
+        cp visualization/outputs/*.png docs/
+        cp README.md docs/index.md
+        echo "<html><body><h1>Job Market Dashboard</h1>" > docs/index.html
+        for img in docs/*.png; do
+          echo "<img src='$(basename $img)' width='800'><br>" >> docs/index.html
+        done
+        echo "</body></html>" >> docs/index.html
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
