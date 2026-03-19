@@ -1,5 +1,11 @@
 # 🚀 Job Market Pipeline - Analyse du Marché de l'Emploi au Maroc
 
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)](https://www.docker.com/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-Monitoring-E6522C)](https://prometheus.io/)
+[![Grafana](https://img.shields.io/badge/Grafana-Dashboard-F46800)](https://grafana.com/)
+[![GitHub stars](https://img.shields.io/github/stars/ZainabElbouyed/job-market-pipeline)](https://github.com/ZainabElbouyed/job-market-pipeline/stargazers)
+
 ---
 
 ## 📋 Table des matières
@@ -9,9 +15,13 @@
 - [Technologies](#-technologies)
 - [Installation](#-installation)
 - [Utilisation](#-utilisation)
+- [Monitoring](#-monitoring)
+- [Déploiement Docker](#-déploiement-docker)
+- [CI/CD](#-cicd)
 - [Résultats](#-résultats)
 - [Structure du projet](#-structure-du-projet)
 - [Contribution](#-contribution)
+- [Auteur](#-auteur)
 
 ---
 
@@ -20,6 +30,8 @@
 **Job Market Pipeline** est un projet complet d'analyse du marché de l'emploi au Maroc. Il automatise la collecte, le nettoyage, l'analyse et la visualisation de **700+ offres d'emploi** provenant du site Emploi.ma.
 
 L'objectif est d'identifier les **tendances du marché** et les **compétences les plus demandées** pour aider les chercheurs d'emploi et les recruteurs à prendre des décisions éclairées.
+
+Le projet intègre une **architecture DevOps complète** avec conteneurisation Docker, monitoring Prometheus/Grafana et intégration continue.
 
 ---
 
@@ -33,6 +45,9 @@ L'objectif est d'identifier les **tendances du marché** et les **compétences l
 | **🎨 Visualisation** | Graphiques professionnels avec Matplotlib, Seaborn et WordCloud |
 | **🤖 Automatisation** | Scripts planifiables pour des collectes régulières |
 | **📓 Notebooks Jupyter** | Démonstrations interactives de chaque étape |
+| **🐳 Conteneurisation** | Déploiement avec Docker et docker-compose |
+| **📈 Monitoring** | Métriques Prometheus et dashboards Grafana |
+| **🔄 CI/CD** | Intégration continue avec GitHub Actions |
 
 ---
 
@@ -64,6 +79,19 @@ graph LR
 
 ---
 
+## Architecture DevOps
+
+```mermaid
+graph TD
+    P[Pipeline Python] -->|Métriques| M[Serveur Métriques<br/>port 8000]
+    M -->|Scrape| Prom[Prometheus<br/>port 9090]
+    Prom -->|Visualisation| Graf[Grafana<br/>port 3000]
+    GH[GitHub Actions] -->|CI/CD| Docker[Docker Hub]
+    Docker -->|Déploiement| Prod[Environnement de production]
+```
+
+---
+
 ## 🛠 Technologies
 
 ### **Langages & Bibliothèques**
@@ -79,11 +107,21 @@ graph LR
 | **WordCloud** | Nuages de mots |
 | **Schedule** | Automatisation des tâches |
 
+### **DevOps & Monitoring**
+| Technologie | Utilisation |
+|-------------|-------------|
+| **Docker** | Conteneurisation de l'application |
+| **Prometheus** | Collecte et stockage des métriques |
+| **Grafana** | Visualisation des métriques et dashboards |
+| **GitHub Actions** | Intégration et déploiement continus |
+| **Pushgateway** | Réception des métriques des jobs batch |
+
 ### **Outils de développement**
 - **Jupyter Notebook** : Exploration interactive
 - **Git** : Versionnement
 - **Pytest** : Tests unitaires
-
+- **psutil** : Métriques système
+- 
 ---
 
 ## 📦 Installation
@@ -146,6 +184,74 @@ python scripts/scheduler.py --interval 21600
 
 ---
 
+## 📈 Monitoring
+
+### **1. Lancer le serveur de métriques**
+```bash
+# Terminal 1
+python scripts/metrics_server.py
+```
+
+### **2. Lancer Prometheus et Grafana avec Docker**
+```bash
+cd docker
+docker-compose -f docker-compose.monitoring.yml up -d
+```
+
+### **3. Accéder aux interfaces**
+| Service | URL | Identifiants |
+|-------------|-------------|-------------|
+| **Métriques** | `http://localhost:8000/metrics` | - |
+| **Prometheus** | `http://localhost:9090` | - |
+| **Grafana** | `http://localhost:3000` | admin/admin | 
+
+### **Métriques disponibles**
+- **jobs_collected_total** : Nombre total d'offres collectées
+- **scraping_duration_seconds** : Temps d'exécution du scraping
+- **errors_total** : Nombre d'erreurs rencontrées
+- **memory_usage_bytes** : Utilisation mémoire
+- **disk_usage_bytes** : Utilisation disque
+
+---
+
+## 🐳 Déploiement Docker
+
+### **1. Build de l'image**
+```bash
+cd docker
+docker build -t job-market-pipeline -f Dockerfile ..
+```
+
+### **2. Lancer avec docker-compose**
+```bash
+# Pipeline seul
+docker-compose up -d
+
+# Avec monitoring
+docker-compose -f docker-compose.monitoring.yml up -d
+```
+
+### **3. Voir les logs**
+```bash
+docker-compose logs -f
+```
+
+### **4. Arrêter les conteneurs**
+```bash
+docker-compose down
+```
+
+---
+
+## 🔄 CI/CD
+| Workflow | Déclencheur | Actions |
+|-------------|-------------|-------------|
+| Tests | Push sur main | - Installation des dépendances <br> - Linting avec flake8 <br> - Tests unitaires avec pytest |
+| Build Docker | Push sur main | - Build de l'image Docker <br> - Push sur Docker Hub |
+| Déploiement | Push sur main | - Déploiement automatique |
+
+---
+
 ## 📊 Résultats
 
 ### **Données générées**
@@ -179,45 +285,66 @@ job-market-pipeline/
 ├── 📂 scraper/                         # Module de collecte
 │   ├── __init__.py
 │   ├── config.py                       # URLs, headers, constantes
-│   ├── utils.py                         # Fonctions helpers (extract_city, etc.)
+│   ├── utils.py                         # Fonctions helpers
 │   ├── scraper.py                       # Classes/fonctions principales
-│   └── scraper.ipynb                     # Démo et tests du scraper
+│   └── scraper.ipynb                     # Démo et tests
 │
 ├── 📂 pipeline/                          # Pipeline ETL
 │   ├── __init__.py
 │   ├── cleaner.py                        # Nettoyage des données
-│   ├── transformer.py                     # Transformation (compétences, etc.)
-│   └── pipeline.ipynb                      # Orchestration du pipeline
+│   ├── transformer.py                     # Transformation
+│   └── pipeline.ipynb                      # Orchestration
 │
 ├── 📂 analysis/                           # Analyse statistique
 │   ├── __init__.py
 │   ├── stats.py                            # Fonctions d'analyse
 │   ├── reports.py                           # Génération de rapports
-│   └── analysis.ipynb                        # Exploration des données
+│   ├── reports/                             # Rapports générés
+│   └── analysis.ipynb                        # Exploration
 │
 ├── 📂 visualization/                       # Graphiques
 │   ├── __init__.py
 │   ├── plots.py                              # Fonctions de visualisation
 │   ├── styles.py                              # Configuration des styles
 │   ├── outputs/                                # Images sauvegardées
-│   └── plots.ipynb                             # Démo des visualisations
+│   └── plots.ipynb                             # Démo
 │
-├── 📂 notebooks/                         # Notebooks de démonstration
-│   ├── outputs/                          # Images sauvegardées
+├── 📂 notebooks/                           # Notebooks de démonstration
+│   ├── outputs/                              # Images sauvegardées
 │   ├── 01_scraping.ipynb
 │   ├── 02_pipeline.ipynb
 │   ├── 03_analysis.ipynb
 │   └── 04_visualization.ipynb
 │
 ├── 📂 scripts/                             # Scripts d'automatisation
-│   ├── run_scraper.py                        # Scraping programmé
-│   ├── run_pipeline.py                        # Pipeline complet
-│   └── scheduler.py                           # Planification cron/airflow
+│   ├── metrics.py                            # Définition des métriques
+│   ├── metrics_server.py                      # Serveur Prometheus
+│   ├── monitoring.py                          # Monitoring pipeline
+│   ├── run_scraper.py                         # Scraping programmé
+│   ├── run_pipeline.py                         # Pipeline complet
+│   ├── run_production.py                       # Exécution en production
+│   ├── scheduler.py                            # Planification
+│   └── test_metrics.py                         # Test des métriques
 │
 ├── 📂 tests/                                # Tests unitaires
 │   ├── test_scraper.py
-│   ├── test_cleaner.py
-│   └── test_analysis.py
+│   └── test_cleaner.py
+│
+├── 📂 docker/                               # Configuration Docker
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── docker-compose.monitoring.yml
+│   └── .dockerignore
+│
+├── 📂 .github/                              # CI/CD
+│   └── workflows/
+│       └── scraper-ci.yml
+│
+├── 📂 monitoring/                           # Configuration monitoring
+│   ├── prometheus.yml
+│   └── grafana/
+│       └── dashboards/
+│           └── scraper-dashboard.json
 │
 ├── 📄 requirements.txt                      # Dépendances
 ├── 📄 .gitignore                              # Fichiers à ignorer
