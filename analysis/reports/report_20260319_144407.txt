@@ -1,0 +1,45 @@
+============================================================
+RAPPORT D'ANALYSE DU MARCHÉ DE L'EMPLOI
+============================================================
+
+📊 STATISTIQUES GÉNÉRALES
+----------------------------------------
+total_offres   : 25
+entreprises    : 18
+villes         : 9
+regions        : 6
+date_min       : 2026-03-19 00:00:00
+date_max       : 2026-03-19 00:00:00
+
+🏆 TOP 15 COMPÉTENCES
+----------------------------------------
+Marketing                      6
+Communication                  6
+Vente                          4
+BTP                            3
+Prospection                    3
+E                              3
+Électrotechnique               3
+Santé                          3
+Management                     3
+Marketing Digital              2
+courants forts                 2
+REVIT                          2
+CANECO BT                      2
+BIM                            2
+AUTOCAD                        2
+
+📍 TOP 10 RÉGIONS
+----------------------------------------
+Casablanca-Mohammedia               16
+Rabat-Salé-Kénitra                  5
+Agadir                              1
+Rabat-Salé-Kénitra - International  1
+Tanger-Tétouan-Al Hoceïma           1
+Oujda                               1
+
+📋 TYPES DE CONTRATS
+----------------------------------------
+CDI             23
+CDD             1
+Intérim         1

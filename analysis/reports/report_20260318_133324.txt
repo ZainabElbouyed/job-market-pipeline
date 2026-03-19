@@ -1,0 +1,61 @@
+============================================================
+RAPPORT D'ANALYSE DU MARCHÉ DE L'EMPLOI
+============================================================
+
+📊 STATISTIQUES GÉNÉRALES
+----------------------------------------
+total_offres   : 745
+entreprises    : 80
+villes         : 67
+regions        : 36
+date_min       : 2026-01-28 00:00:00
+date_max       : 2026-03-18 00:00:00
+
+🏆 TOP 15 COMPÉTENCES
+----------------------------------------
+Qualité                        192
+Maintenance                    192
+Production                     147
+Gestion                        134
+Vente                          126
+Comptabilité                   115
+Finance                        109
+Non spécifié                   76
+Recouvrement                   53
+Assistanat                     50
+Négociation                    50
+Machines                       46
+Formation                      46
+Transport                      45
+Communication                  45
+
+📍 TOP 10 RÉGIONS
+----------------------------------------
+Casablanca-Mohammedia               463
+Rabat-Salé-Kénitra                  97
+Agadir - Béni Mellal-Khénifra - Casablanca-Mohammedia - Dakhla - Errachidia - Fès - Guelmim - Laâyoune - Marrakech-Safi - Meknès - Oujda - Rabat-Salé-Kénitra - Settat - Tanger-Tétouan-Al Hoceïma - International 37
+Marrakech-Safi                      34
+Tanger-Tétouan-Al Hoceïma           33
+Agadir                              20
+Settat                              6
+Fès                                 6
+Casablanca-Mohammedia - Rabat-Salé-Kénitra 5
+Agadir - Béni Mellal-Khénifra - Casablanca-Mohammedia - Dakhla - Errachidia - Fès - Guelmim - Laâyoune - Marrakech-Safi - Meknès - Oujda - Rabat-Salé-Kénitra - Settat - Tanger-Tétouan-Al Hoceïma 4
+
+📋 TYPES DE CONTRATS
+----------------------------------------
+CDI             491
+Intérim         148
+CDD             35
+CDI - CDD - Intérim 29
+CDI - CDD       13
+Stage           7
+CDI - Intérim   7
+CDD - Intérim   4
+CDI - Anapec    2
+Freelance       2
+Anapec          2
+CDI - CDD - Anapec 2
+Stage - Anapec  1
+CDI - CDD - Intérim - Stage - Freelance - Anapec - Alternance - Temps partiel - Statutaire 1
+CDI - Freelance 1

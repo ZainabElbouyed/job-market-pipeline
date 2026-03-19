@@ -1,0 +1,16 @@
+venv/
+__pycache__/
+*.pyc
+.git
+.github
+.vscode
+.idea
+data/raw/*.csv
+data/processed/*.csv
+visualization/outputs/*.png
+logs/*.log
+backups/
+*.log
+.env
+.DS_Store
+notebooks/.ipynb_checkpoints/

@@ -1,0 +1,61 @@
+============================================================
+RAPPORT D'ANALYSE DU MARCHÉ DE L'EMPLOI
+============================================================
+
+📊 STATISTIQUES GÉNÉRALES
+----------------------------------------
+total_offres   : 739
+entreprises    : 80
+villes         : 67
+regions        : 36
+date_min       : 2026-01-28 00:00:00
+date_max       : 2026-03-18 00:00:00
+
+🏆 TOP 15 COMPÉTENCES
+----------------------------------------
+Qualité                        190
+Maintenance                    190
+Production                     147
+Gestion                        131
+Vente                          124
+Comptabilité                   114
+Finance                        108
+Non spécifié                   76
+Assistanat                     51
+Recouvrement                   51
+Négociation                    49
+Formation                      48
+Transport                      44
+Machines                       44
+Communication                  43
+
+📍 TOP 10 RÉGIONS
+----------------------------------------
+Casablanca-Mohammedia               463
+Rabat-Salé-Kénitra                  93
+Agadir - Béni Mellal-Khénifra - Casablanca-Mohammedia - Dakhla - Errachidia - Fès - Guelmim - Laâyoune - Marrakech-Safi - Meknès - Oujda - Rabat-Salé-Kénitra - Settat - Tanger-Tétouan-Al Hoceïma - International 37
+Marrakech-Safi                      34
+Tanger-Tétouan-Al Hoceïma           32
+Agadir                              20
+Fès                                 6
+Settat                              6
+Casablanca-Mohammedia - Rabat-Salé-Kénitra 5
+Béni Mellal-Khénifra                4
+
+📋 TYPES DE CONTRATS
+----------------------------------------
+CDI             486
+Intérim         147
+CDD             35
+CDI - CDD - Intérim 28
+CDI - CDD       13
+CDI - Intérim   7
+Stage           7
+CDD - Intérim   4
+Anapec          3
+CDI - Anapec    2
+CDI - CDD - Anapec 2
+Freelance       2
+Stage - Anapec  1
+CDI - Freelance 1
+CDI - CDD - Intérim - Stage - Freelance - Anapec - Alternance - Temps partiel - Statutaire 1

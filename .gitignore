@@ -1,0 +1,57 @@
+# Environnement virtuel
+venv/
+env/
+ENV/
+
+# Fichiers Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# Données
+data/raw/*.csv
+data/processed/*.csv
+data/archive/*.csv
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/archive/.gitkeep
+
+# Visualisations
+visualization/outputs/
+!visualization/outputs/.gitkeep
+
+# Logs
+*.log
+scraper_auto.log
+
+# Environnement
+.env
+.DS_Store
+
+# Fichiers temporaires
+*.tmp
+*.temp
+
+logs/
+backups/
+docker/.env
+
+# Données
+data/raw/*.csv
+data/processed/*.csv
+visualization/outputs/*.png
+
+# Monitoring
+prometheus_data/
+grafana_data/
+
+# Fichiers temporaires
+*.log
+*.pid
+*.lock

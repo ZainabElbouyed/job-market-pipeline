@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  scraper:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: job-market-scraper
+    volumes:
+      - ../data:/app/data
+      - ../analysis/reports:/app/analysis/reports
+      - ../visualization/outputs:/app/visualization/outputs
+      - ../logs:/app/logs
+      - ../backups:/app/backups
+    environment:
+      - TZ=Africa/Casablanca
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    command: python scripts/run_pipeline.py --pages 30 --visuals
+    
+  scheduler:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: job-market-scheduler
+    volumes:
+      - ../data:/app/data
+      - ../analysis/reports:/app/analysis/reports
+      - ../visualization/outputs:/app/visualization/outputs
+      - ../logs:/app/logs
+      - ../backups:/app/backups
+    environment:
+      - TZ=Africa/Casablanca
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    command: python scripts/scheduler.py --daily --time "09:00"
+    depends_on:
+      - scraper
