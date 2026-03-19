@@ -50,7 +50,7 @@ jobs:
         flags: unittests
 
   build-docker:
-    needs: test  # ← Ne s'exécute que si les tests passent
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
@@ -70,6 +70,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: .
+        file: docker/Dockerfile  
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/job-market-pipeline:latest
   
@@ -80,6 +81,11 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Start Pushgateway (for metrics)
+      run: |
+        docker run -d -p 9091:9091 --name pushgateway prom/pushgateway
+        sleep 5
     
     - name: Setup Python
       uses: actions/setup-python@v4
@@ -92,16 +98,24 @@ jobs:
     
     - name: Generate visualizations
       run: |
-        python scripts/run_pipeline.py --pages 1 --visuals
+        python scripts/run_pipeline.py --pages 1 --visuals || \
+        python scripts/run_pipeline.py --no-scrape --visuals
     
     - name: Prepare for GitHub Pages
       run: |
         mkdir -p docs
-        cp visualization/outputs/*.png docs/
+        if [ -d "visualization/outputs" ]; then
+          cp visualization/outputs/*.png docs/ 2>/dev/null || true
+        fi
         cp README.md docs/index.md
-        echo "<html><body><h1>Job Market Dashboard</h1>" > docs/index.html
+        echo "<html><head><title>Job Market Dashboard</title>" > docs/index.html
+        echo "<style>body{font-family:Arial;margin:40px;background:#f5f5f5;}</style>" >> docs/index.html
+        echo "</head><body>" >> docs/index.html
+        echo "<h1>📊 Job Market Dashboard - Maroc</h1>" >> docs/index.html
         for img in docs/*.png; do
-          echo "<img src='$(basename $img)' width='800'><br>" >> docs/index.html
+          name=$(basename "$img" .png)
+          echo "<h2>${name//_/ }</h2>" >> docs/index.html
+          echo "<img src='$(basename $img)' width='900' style='border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.1);'><br><br>" >> docs/index.html
         done
         echo "</body></html>" >> docs/index.html
     
