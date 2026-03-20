@@ -36,3 +36,4 @@ services:
     command: python scripts/scheduler.py --daily --time "09:00"
     depends_on:
       - scraper
+

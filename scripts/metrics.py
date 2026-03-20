@@ -2,6 +2,7 @@
 from prometheus_client import Counter, Histogram, Gauge, push_to_gateway
 import psutil
 import os
+from datetime import datetime
 
 # Configuration
 PUSHGATEWAY_URL = 'http://localhost:9091'  # Par défaut, Pushgateway tourne sur ce port
@@ -25,10 +26,17 @@ def record_scraping_result(jobs_count, duration, error_count=0):
     if error_count > 0:
         errors_total.inc(error_count)
     
+    os.makedirs('logs', exist_ok=True)
+    with open('logs/metrics.log', 'a') as f:
+        f.write(f"{datetime.now().isoformat()},{jobs_count},{duration},{error_count}\n")
+
     # Envoyer les métriques à Prometheus via Pushgateway
-    push_to_gateway(
-        PUSHGATEWAY_URL,
-        job='job-market-pipeline',
-        registry=None  # Utilise le registre par défaut
-    )
-    print(f"📊 Métriques envoyées: {jobs_count} offres, {duration:.2f}s")
+    try:
+        push_to_gateway(
+            PUSHGATEWAY_URL,
+            job='job-market-pipeline',
+            registry=None  # Utilise le registre par défaut
+        )
+        print(f"📊 Métriques envoyées: {jobs_count} offres, {duration:.2f}s")
+    except Exception as e:
+        print(f"⚠️ Pushgateway non disponible: {e} (métriques seulement en local)")
