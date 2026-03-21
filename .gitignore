@@ -16,7 +16,7 @@ __pycache__/
 
 # Données
 data/raw/*.csv
-data/processed/*.csv
+!data/processed/jobs_clean_20260320_222831.csv
 data/archive/*.csv
 !data/raw/.gitkeep
 !data/processed/.gitkeep
